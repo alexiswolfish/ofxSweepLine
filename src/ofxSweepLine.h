@@ -17,7 +17,7 @@
 class LineSeg{
 
 public: 
-    float getYCoord(int time) const;
+    float getYCoord(int time);
     int pIndex; //index into the polyline vector
     int edge; // p[i] to p[i+1]
     ofVec2f left; //leftmost point

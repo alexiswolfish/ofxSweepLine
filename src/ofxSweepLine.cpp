@@ -9,9 +9,10 @@
 #include <math.h>
 #include "ofxSweepLine.h"
 
-float LineSeg::getYCoord(int time) const{
+float LineSeg::getYCoord(int time){
     float slope = (left.y-right.y)/(left.x-right.x);
-    return slope*(time-left.x)+left.y;
+    yCoord = slope*(time-left.x)+left.y;
+    return yCoord;
 }
 /*---------------------------------------------*/
 bool EventPoint::pointSorter(ofVec2f a, ofVec2f b){
@@ -179,17 +180,31 @@ vector<ofVec2f> ofxSweepLine::sweep(vector<ofPolyline> p){
             LineSeg* intersect2;
             LineSeg* above;
             LineSeg* below;
-            
+            pair<set<int>::iterator,bool> check;
            // set<LineSeg, lineSegCompare>::iterator itr;
             
             ret.push_back(e.point); //store the intersection in the output vector
            
-            //above and below should in theory now be swapped *** DEBUG
-            //after the intersection
+            //remove intersecting lines from the set, update their y coord and reinsert
+            //to maintain proper sorting
             
             itr = sweptLines.find(e.intersection.first);
+            
+            //update yCoord in the static line vector
+            eq.lines[e.lIndex].getYCoord(e.point.x+1); 
+            //gah, might want to redo all of this so its just a pointer to the 
+            //line seg stored in the line vector rather than the lines themselves
+            //so you don't have to update twice
+            
             *intersect1 = *itr; //will = nLines.end() if not found
-            intersect1->yCoord = intersect1->getYCoord(e.point.x+1);
+            intersect1->getYCoord(e.point.x+1);
+            sweptLines.erase(itr);
+            check = sweptLines.insert(*intersect1);
+            //err keep thinking about this, resinsertion should replace
+            //the two lines in the proper place
+            //-----------
+                
+            
             if(itr++ != sweptLines.end()){
                 *below = *(itr++);
                 below->yCoord = below->getYCoord(e.point.x+1);
