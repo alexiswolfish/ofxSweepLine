@@ -17,12 +17,15 @@
 class LineSeg{
 
 public: 
+    LineSeg();
+    LineSeg(int i, int e, ofVec2f l, ofVec2f r);
     float getYCoord(int time);
+    int lIndex; //index into the LineSeg vector
     int pIndex; //index into the polyline vector
     int edge; // p[i] to p[i+1]
     ofVec2f left; //leftmost point
     ofVec2f right; //rightmost point
-    int yCoord;
+    float yCoord;
 };
 
 class EventPoint{
@@ -32,6 +35,8 @@ class EventPoint{
         LEFT,
         INTERSECTION
     };
+        EventPoint();
+        EventPoint(Type type, ofVec2f point, LineSeg i1, LineSeg i2, int pIndex, int lIndex, int edge);
         Type type;
         int pIndex; //index of original polyline in the vector
         int edge; // p[i] to p[i+1]
@@ -75,12 +80,11 @@ public:
 //    private:
 //        int t;
 //    };
-    static float sweepPos;
-    
     struct lineSegCompare {
         bool operator() (const LineSeg& x, const LineSeg& y) const
         {return x.yCoord < y.yCoord; }
     };
+    
     std::set<LineSeg, lineSegCompare> sweptLines;
     std::set<ofVec2f> intersections;
     EventQueue eq;
