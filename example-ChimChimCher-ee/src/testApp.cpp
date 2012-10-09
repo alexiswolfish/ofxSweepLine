@@ -1,5 +1,5 @@
 #include "testApp.h"
-
+//OfxSweepLine example
 //--------------------------------------------------------------
 void testApp::setup(){
     guiWidth = 200;
